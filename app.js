@@ -10,27 +10,13 @@ var flash = require('connect-flash');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var mongoose = require('mongoose');
+var methodOverride = require('method-override');
 var csrf = require('csurf');
 var nodemailer = require('nodemailer');
 var crypto = require('crypto');
 
 //express
 var app = express();
-
-//socket.io
-var io = socket_io();
-app.io = io;
-
-io.on('connection', function(socket) {
-  console.log('user connected to socket');
-  socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
-  });
-  socket.on('disconnect', function() {
-    console.log('user disconnected');
-  });
-});
-
 
 // security stuff
 app.disable('x-powered-by');
@@ -57,9 +43,11 @@ app.use(cookieParser());
 
 // Passport deps
 var passport = require('passport');
+var passportSocketIo = require('passport.socketio'); // hopefully this secures socket traffic, piggybacking on passport's user object
 
 // pull in out passport configuration
 require('./config/passport')(passport);
+var sessionStore = new MongoStore({ mongooseConnection: mongoose.connection });
 
 // initialize session and passport. keep in this order.
 app.use(session({ 
@@ -67,11 +55,22 @@ app.use(session({
   key: 'sessionId',
   resave: true,
   saveUninitialized: true,
-  store: new MongoStore({ mongooseConnection: mongoose.connection })
+  store: sessionStore
 }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+// methodOverride
+app.use(methodOverride(function(req, res){
+  if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+    // look in urlencoded POST bodies and delete it
+    var method = req.body._method;
+    delete req.body._method;
+    return method;
+  }
+}));
+
+// csurf
 app.use(csrf());
 app.use(function(req, res, next) {
   res.locals.csrftoken = req.csrfToken();
@@ -80,17 +79,56 @@ app.use(function(req, res, next) {
 app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
-var chat = require('./routes/chat');
+//socket.io
+var io = socket_io();
+app.io = io;
+
+//config socket.io with passport.socketio auth info
+io.use(passportSocketIo.authorize({
+  cookieParser: cookieParser,
+  key: 'sessionId',
+  secret: 'd924nWRY324F$%g2D-[e1$3slSb4(fK`',
+  store: sessionStore,
+  success: onAuthorizeSuccess,
+  fail: onAuthorizeFail
+}));
+
+function onAuthorizeSuccess(data, accept){
+  console.log('successful connection to socket.io');
+  accept();
+}
+
+function onAuthorizeFail(data, message, error, accept){
+  if(error)
+    throw new Error(message);
+  console.log('failed connection to socket.io:', message);
+
+  // If you use socket.io@1.X the callback looks different
+  // If you don't want to accept the connection
+  if(error)
+    accept(new Error(message));
+  // this error will be sent to the user as a special error-package
+  // see: http://socket.io/docs/client-api/#socket > error-object
+}
+
+io.on('connection', function(socket) {
+  console.log('user connected to socket');
+  socket.on('chat message', function(msg){
+    io.emit('chat message', msg);
+  });
+  socket.on('disconnect', function() {
+    console.log('user disconnected');
+  });
+});
+
+// define routes
+var routes = require('./routes/index')(express, passport);
+var users = require('./routes/users')(express, passport);
+var chat = require('./routes/chat')(express, passport);
 
 app.use('/', routes);
 app.use('/users', users);
 app.use('/chat', chat);
-
-// io.on('connection', function(socket) {
-//   console.log('a user connected');
-// });
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

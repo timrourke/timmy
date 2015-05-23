@@ -1,11 +1,22 @@
 <% include ../head %>
     <h1><%= title %></h1>
     <h2>Hey, <%= user.username %>!</h2>
-    <p>Email: <%= user.email %></p>
-    
+        
     <% if (message.length > 0) { %>
       <div class="alert alert-danger"><%= message %></div>
     <% } %>
+
+    <h2>Update your profile info</h2>
+    <form action="/users/profile" method="POST">
+      <input type="text" placeholder="Your username" name="username" value="<%= user.username %>">
+      <input type="email" placeholder="Your e-mail address" name="email" value="<%= user.email %>">
+      <input type="password" placeholder="New Password" name="newpassword">
+      <input type="password" placeholder="Confirm New Password" name="confirmpassword">
+      <input type="hidden" name="_originalusername" value="<%= user.username %>">
+      <input type="hidden" name="_method" value="put">
+      <input type="hidden" name="_csrf" value="<%= csrftoken %>">
+      <input type="submit" value="Update">
+    </form>
 
     <p><a href="/users/logout">Log out</a></p>
 <% include ../footer %>
