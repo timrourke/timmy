@@ -1,0 +1,23 @@
+#chatForm {
+	@extend .clearfix;
+	position:relative;
+	z-index:1;
+	input { 
+		float:left;
+		width:100%;
+		margin-right:-5em;
+		z-index:-1;
+	}
+	button { 
+		width: 5em;
+		margin-left:-5em;
+		float:right;
+		z-index:1000;
+	}
+}
+
+#messages { 
+	list-style-type: none; 
+	margin: 0; 
+	padding: 0; 
+}

@@ -1,0 +1,572 @@
+/*
+ * WTF, forms?
+ * Released under MIT and copyright 2014 Mark Otto.
+ * http://wtfforms.com
+ *
+ * Embedded icons from Open Iconic.
+ * Released under MIT and copyright 2014 Waybury.
+ * http://useiconic.com/open
+ */
+
+/* Example HTML markup for form elements
+
+<label class="control checkbox">
+  <input type="checkbox">
+  <span class="control-indicator"></span>
+  Check this custom checkbox
+</label>
+
+<label class="control radio">
+  <input id="radio1" name="radio" type="radio">
+  <span class="control-indicator"></span>
+  Toggle this custom radio
+</label>
+<label class="control radio">
+  <input id="radio2" name="radio" type="radio">
+  <span class="control-indicator"></span>
+  Or toggle this other custom radio
+</label>
+
+It's possible to change the checkbox icon by adding classes:
+
+.control-x
+.control-dash
+
+<label class="control checkbox control-x">...</label>
+
+<div class="select">
+  <select aria-label="Select menu example">
+    <option selected>Open this select menu</option>
+    <option value="1">One</option>
+    <option value="2">Two</option>
+    <option value="3">Three</option>
+  </select>
+</div>
+
+<label class="file">
+  <input type="file" id="file" aria-label="File browser example">
+  <span class="file-custom"></span>
+</label>
+
+<progress class="progress" value="25" max="100">
+  25%
+</progress>
+<progress class="progress" value="50" max="100">
+  50%
+</progress>
+<progress class="progress" value="75" max="100">
+  75%
+</progress>
+<progress class="progress" value="100" max="100">
+  100%
+</progress>
+
+*/
+
+
+/*
+ * Global form element styles
+ */
+
+input[type="text"],
+input[type="email"],
+input[type="url"],
+input[type="password"],
+input[type="search"] {
+  position:relative;
+  height:u(2.5rem);
+  border:0;
+  border-radius:0;
+  display:inline-block;
+  margin: $typl8-indent-val/2 auto;
+  padding:0 0.5em;
+  font-size:1em;
+  border: u(.075rem) solid rgba(255,255,255,0.1);
+  background-color:rgba(255,255,255,0.25);
+  color:#444;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  transition:all 0.3s ease-in;
+  &:focus {
+    background-color:rgba(255,255,255,0.5);
+    border: u(.075rem) solid $pink;
+    color:#222;
+  }
+}
+
+$placeholderTextColor:#444;
+
+::-webkit-input-placeholder {
+   color: $placeholderTextColor;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   color: $placeholderTextColor;  
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: $placeholderTextColor;  
+}
+
+:-ms-input-placeholder {  
+   color: $placeholderTextColor;  
+}
+
+.js {
+  input,
+  select,
+  option,
+  button {
+    outline:0;
+  }
+}
+
+form {
+  @extend .clearfix;
+  background-color:rgba(0,0,0,0.2);
+  padding:1em;
+  margin-bottom: $typl8-indent-val;
+}
+
+fieldset {
+  margin:0;
+  border:0;
+  padding:1em;
+  background-color:rgba(0,0,0,0.1);
+  z-index:-1;
+}
+
+button,
+input,
+legend,
+select {
+  font-family:$sans-serif;
+}
+
+fieldset,
+.select,
+.file,
+textarea {
+  margin: $typl8-indent-val/2 auto;
+  font-size:1em;
+}
+
+textarea {
+  clear:both;
+  display:block;
+  padding:1em;
+  width:100%;
+}
+
+.select {
+  @if $typl8-paragraph-spacing == false {
+    & + .select {
+      text-indent: $typl8-indent-val;
+      margin-top: -$typl8-indent-val;
+    }
+  }
+}
+
+label.control,
+.select,
+.file {
+  margin-right:0.5em;
+}
+
+input[type="submit"],
+button,
+.button {
+  font-size:1em;
+  font-weight:700;
+  text-transform:uppercase;
+  height:u(2.5rem);
+  margin: $typl8-indent-val/2 auto;
+  padding:0 1em;
+  display: inline-block;
+  background-image:linear-gradient(to bottom, $salmon, darken($salmon, 5%));
+  border: 0;
+  box-shadow:0 0 u(.15rem) u(-0.1rem) $salmon;
+  border-radius:0;
+  cursor: pointer;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  color:#444;
+  transition:all 0.3s ease-in-out;
+  overflow:hidden;
+  &:hover {
+    color:$pink;
+    transform:scale(1.025);
+  }
+}
+
+input[type="submit"],
+button {
+  &:disabled {
+    color:#777;
+    background-color: #eee;
+    background-image:none;
+    border: u(.075rem) solid #ddd;
+    cursor: default;
+  }
+}
+
+/*
+ * Checkboxes and radios
+ */
+
+
+
+.control {
+  position: relative;
+  display: inline-block;
+  padding-left: u(1.5rem);
+  line-height:1.75;
+  cursor: pointer;
+}
+.control input {
+  position: absolute;
+  left:0;
+  top:u(0.25rem);
+  opacity: 0;
+  z-index: -1; /* Put the input behind the label so it doesn't overlay text */
+}
+.control-indicator {
+  position: absolute;
+  top: u(.25rem);
+  left: 0;
+  display: block;
+  width:  u(1rem);
+  height: u(1rem);
+  line-height: u(1rem);
+  font-size: 65%;
+  color: #eee;
+  border: u(.075rem) solid #ddd;
+  text-align: center;
+  background-color: #eee;
+  background-size: 50% 50%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+/* Hover state */
+/* Uncomment if you need it, but be aware of the sticky iOS states.
+.control:hover .control-indicator {
+  color: #fff;
+  background-color: #ccc;
+}
+*/
+
+/* Focus */
+.control input:focus ~ .control-indicator {
+  box-shadow: 0 0 0 u(.075rem) #fff, 0 0 0 u(.2rem) lighten($active-input-color, 15%);
+}
+
+/* Checked state */
+.control input:checked ~ .control-indicator {
+  color: #fff;
+  background-color: $active-input-color;
+}
+
+/* Active */
+.control input:active ~ .control-indicator {
+  color: #fff;
+  background-color: #84c6ff;
+}
+
+/* Checkbox modifiers */
+.checkbox .control-indicator {
+  border-radius: u(.25rem);
+}
+.checkbox input:checked ~ .control-indicator {
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNy4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgOCA4IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA4IDgiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPHBhdGggZmlsbD0iI0ZGRkZGRiIgZD0iTTYuNCwxTDUuNywxLjdMMi45LDQuNUwyLjEsMy43TDEuNCwzTDAsNC40bDAuNywwLjdsMS41LDEuNWwwLjcsMC43bDAuNy0wLjdsMy41LTMuNWwwLjctMC43TDYuNCwxTDYuNCwxeiINCgkvPg0KPC9zdmc+DQo=);
+}
+
+/* Radio modifiers */
+.radio .control-indicator {
+  border-radius: 50%;
+}
+.radio input:checked ~ .control-indicator {
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNy4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgOCA4IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA4IDgiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPHBhdGggZmlsbD0iI0ZGRkZGRiIgZD0iTTQsMUMyLjMsMSwxLDIuMywxLDRzMS4zLDMsMywzczMtMS4zLDMtM1M1LjcsMSw0LDF6Ii8+DQo8L3N2Zz4NCg==);
+}
+
+/* Alternately, use another character */
+.control-x input:checked ~ .control-indicator {
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNy4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB3aWR0aD0iOHB4IiBoZWlnaHQ9IjhweCIgdmlld0JveD0iMCAwIDggOCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgOCA4IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxwYXRoIGZpbGw9IiNGRkZGRkYiIGQ9Ik0xLjQsMEwwLDEuNGwwLjcsMC43bDEuOCwxLjhMMC43LDUuN0wwLDYuNGwxLjQsMS40bDAuNy0wLjdsMS44LTEuOGwxLjgsMS44bDAuNywwLjdsMS40LTEuNEw3LjEsNS43DQoJTDUuMywzLjlsMS44LTEuOGwwLjctMC43TDYuNCwwTDUuNywwLjdMMy45LDIuNUwyLjEsMC43QzIuMSwwLjcsMS40LDAsMS40LDB6Ii8+DQo8L3N2Zz4NCg==);
+}
+.control-dash input:checked ~ .control-indicator {
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNy4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB3aWR0aD0iOHB4IiBoZWlnaHQ9IjhweCIgdmlld0JveD0iMCAwIDggOCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgOCA4IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxwYXRoIGZpbGw9IiNGRkZGRkYiIGQ9Ik0wLDN2Mmg4VjNIMHoiLz4NCjwvc3ZnPg0K)
+}
+
+
+
+/*
+ * Select
+ */
+
+.select {
+  height:u(2.5rem);
+  position: relative;
+  display: block;
+  float:left;
+}
+.select select {
+  height:100%;
+  display: inline-block;
+  width: 100%;
+  margin: 0;
+  padding: u(0.5rem) u(2.25rem) u(.5rem) u(1rem);
+  background-color: #eee;
+  border: 0;
+  border-radius:0;
+  cursor: pointer;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+}
+/* Undo the Firefox inner focus ring */
+.select select:focus:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 #000;
+}
+/* Dropdown arrow */
+.select:after {
+  position: absolute;
+  top: 50%;
+  right: u(1.25rem);
+  display: inline-block;
+  content: "";
+  width: 0;
+  height: 0;
+  margin-top: u(-.15rem);
+  pointer-events: none;
+  border-top: u(.35rem) solid;
+  border-right: u(.35rem) solid transparent;
+  border-bottom: u(.35rem) solid transparent;
+  border-left: u(.35rem) solid transparent;
+}
+
+/* Hover state */
+/* Uncomment if you need it, but be aware of the sticky iOS states.
+.select select:hover {
+  background-color: #ddd;
+}
+*/
+
+/* Focus */
+.select select:focus {
+  box-shadow: 0 0 0 u(.075rem) #fff, 0 0 0 u(.2rem) lighten($active-input-color, 15%);
+}
+
+/* Active/open */
+.select select:active {
+  color: #fff;
+  background-color: $active-input-color;
+}
+
+/* Hide the arrow in IE10 and up */
+.select select::-ms-expand {
+  display: none;
+}
+
+/* Media query to target Firefox only */
+@-moz-document url-prefix() {
+  /* Firefox hack to hide the arrow */
+  .select select {
+    text-indent: 0.01px;
+    text-overflow: '';
+    padding-right: u(1rem);
+  }
+
+  /* <option> elements inherit styles from <select>, so reset them. */
+  .select option {
+    background-color: #fff;
+  }
+}
+
+/* IE9 hack to hide the arrow */
+@media screen and (min-width:0\0) {
+  .select select {
+    z-index: 1;
+    padding: u(.5rem) u(1.5rem) u(.5rem) u(1rem);
+  }
+  .select:after {
+    z-index: 5;
+  }
+  .select:before {
+    position: absolute;
+    top: 0;
+    right: u(1rem);
+    bottom: 0;
+    z-index: 2;
+    content: "";
+    display: block;
+    width: u(1.5rem);
+    background-color: #eee;
+  }
+  .select select:hover,
+  .select select:focus,
+  .select select:active {
+    color: #555;
+    background-color: #eee;
+  }
+}
+
+
+
+/*
+ * File
+ */
+
+.file {
+  font-family:$sans-serif;
+  position: relative;
+  display: block;
+  float:left;
+  cursor: pointer;
+  height: u(2.5rem);
+}
+.file input {
+  min-width: u(14rem);
+  margin: 0;
+  filter: alpha(opacity=0);
+  opacity: 0;
+}
+.file-custom {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 5;
+  height: u(2.5rem);
+  padding: u(.5rem) u(1rem);
+  background-color: #fff;
+  border: u(.075rem) solid #ddd;
+  box-shadow: inset 0 u(.2rem) u(.4rem) rgba(0,0,0,.05);
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+.file-custom:after {
+  content: "Choose file...";
+}
+.file-custom:before {
+  position: absolute;
+  top: u(-.075rem);
+  right: u(-.075rem);
+  bottom: u(-.075rem);
+  z-index: 6;
+  display: block;
+  content: "Browse";
+  height: u(2.5rem);
+  padding: u(.5rem) u(1rem);
+  background-color: #eee;
+  border: u(.075rem) solid #ddd;
+}
+
+/* Focus */
+.file input:focus ~ .file-custom {
+  box-shadow: 0 0 0 u(.075rem) #fff, 0 0 0 u(.2rem) $active-input-color;
+}
+
+
+
+/*
+ * Progress
+ */
+
+.progress {
+  display: inline-block;
+  height: u(1rem);
+}
+.progress[value] {
+  /* Reset the default appearance */
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  /* Remove Firefox and Opera border */
+  border: 0;
+  /* IE10 uses `color` to set the bar background-color */
+  color: $active-input-color;
+}
+.progress[value]::-webkit-progress-bar {
+  background-color: #eee;
+}
+.progress[value]::-webkit-progress-value {
+  background-color: $active-input-color;
+  border-top-left-radius: u(.2rem);
+  border-bottom-left-radius: u(.2rem);
+}
+.progress[value="100"]::-webkit-progress-value {
+  border-top-right-radius: u(.2rem);
+  border-bottom-right-radius: u(.2rem);
+}
+
+/* Firefox styles must be entirely separate or it busts Webkit styles. */
+@-moz-document url-prefix() {
+  .progress[value] {
+    background-color: #eee;
+  }
+  .progress[value]::-moz-progress-bar {
+    background-color: $active-input-color;
+    border-top-left-radius: u(.2rem);
+    border-bottom-left-radius: u(.2rem);
+  }
+  .progress[value="100"]::-moz-progress-bar {
+    border-top-right-radius: u(.2rem);
+    border-bottom-right-radius: u(.2rem);
+  }
+}
+
+/* IE9 hacks to accompany custom markup. We don't need to scope this via media queries, but I feel better doing it anyway. */
+@media screen and (min-width:0\0) {
+  .progress {
+    background-color: #eee;
+  }
+  .progress-bar {
+    display: inline-block;
+    height: u(1rem);
+    text-indent: -999rem; /* Simulate hiding of value as in native `<progress>` */
+    background-color: $active-input-color;
+    border-top-left-radius: u(.2rem);
+    border-bottom-left-radius: u(.2rem);
+  }
+  .progress[width="100%"] {
+    border-top-right-radius: u(.2rem);
+    border-bottom-right-radius: u(.2rem);
+  }
+}
+
+
+/*
+ * Control layouts
+ */
+
+.controls-stacked {
+  margin: u(1rem) 0;
+}
+.controls-stacked .control,
+.controls-stacked .progress {
+  display: block;
+}
+.controls-stacked .control + .control,
+.controls-stacked .progress + .progress {
+  margin-top: u(.5rem);
+}
+
+.controls-inline {
+  margin: u(1rem) 0;
+}
+.controls-inline .control {
+  display: inline-block;
+  height: u(1rem);
+}
+.controls-inline .control + .control {
+  margin-left: u(1rem);
+}

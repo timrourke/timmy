@@ -1,0 +1,15 @@
+<% include ../head %>
+    <h1><%= title %></h1>
+    <p>Log in</p>
+
+    <% if (message.length > 0) { %>
+      <div class="alert alert-danger"><%= message %></div>
+    <% } %>
+
+    <form action="/users/login" method="POST">
+    	<input type="email" placeholder="Your e-mail address" name="email">
+    	<input type="password" placeholder="Password" name="password">
+      <input type="hidden" name="_csrf" value="<%= csrftoken %>">
+    	<input type="submit" value="Log in">
+    </form>
+<% include ../footer %>

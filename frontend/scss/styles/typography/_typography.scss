@@ -1,0 +1,55 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family:$sans-serif;
+	font-weight:900;
+}
+
+blockquote,
+blockquote + figcaption { 
+	@include typl8-blockquote("-");
+	font-size:1.125em;
+	font-family:$sans-serif;
+	margin:2.5em 1em;
+	padding:1.25em 1em 2em 1em;
+	background-color:white;
+	border-left:0.25em solid #aaa;
+	+ figcaption {
+		font-style:italic;
+		margin-top:-2.5em;
+		padding-top:0;
+		padding-bottom:1.5em;
+	}
+	cite {
+		display:inline;
+	}
+}
+
+.typl8-pull-quote {
+	margin-bottom:1.5em;
+	blockquote {
+		margin-top:0;
+		margin-bottom:0;
+		border:0;
+		padding-left:2em;
+		padding-right:2em;
+		text-align:center;
+		font-style:italic;
+	}
+}
+
+.typl8-drop-cap::first-letter {
+	font-weight:700;
+}
+
+html{
+	@media all and (min-width:600px) {
+		font: $typl8-font-weight #{($typl8-font-size + 12.5) + "%"}/#{$typl8-line-height} $typl8-font-family;
+	}
+	@media all and (min-width:1100px) {
+		font: $typl8-font-weight #{($typl8-font-size + 46.25) + "%"}/#{$typl8-line-height} $typl8-font-family;
+	}
+}

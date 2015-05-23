@@ -1,0 +1,19 @@
+//lazySizes onloaded css animations.
+//IMPORTANT: Make sure these transitions don't override other desired effects.
+.teaser.lazyload {
+	opacity: 0;
+}
+
+.teaser.lazyloaded {
+	opacity: 1;
+	transition: opacity 300ms;
+}
+
+.no-js .teaser.lazyload {
+	opacity:1;
+}
+
+figure img {
+	margin:0 auto;
+	display:block;
+}

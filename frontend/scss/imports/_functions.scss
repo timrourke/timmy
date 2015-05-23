@@ -1,0 +1,36 @@
+/*The function below is David Walsh's mixin to convert REMs to PXs for IE.
+
+BE SURE TO CHANGE THE BASE UNIT APPROPRIATELY FOR YOUR DESIGN.*/
+
+$pixelBase : 16; /* 1 */
+
+@function parseInt($n) {
+  @return $n / ($n * 0 + 1); /* 2 */
+}
+
+@function u($values){ /* 3 */
+
+      $list: (); /* 4 */
+
+      @each $value in $values { /* 5 */
+
+            $unit : unit($value); /* 6 */
+            $val  : parseInt($value); /* 2 */
+
+            @if ($px-only) and ($unit == 'rem') { /* 7 */
+                  $list: append($list, ($val * $pixelBase) + px); /* 7 */
+            }
+
+            @else if($unit == 'px') or ($unit == 'rem'){ /* 8 */
+                  $list: append($list, $value); /* 8 */
+            }
+
+            @else {
+                  @warn 'There is no unit conversion for #{$unit}'; /* 9 */
+            }
+
+      }
+
+      @return $list(); /* 10 */
+
+}

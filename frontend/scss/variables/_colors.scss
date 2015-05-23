@@ -1,0 +1,79 @@
+$violet:#7777ff;
+$green:#25ffbb;
+$lightblue:#33d0ff;
+$pink:#ff7777;
+$salmon:#c34c4f;
+$orange:#ff9955;
+$coolgrey:#313335;
+
+//Input colors
+$active-input-color:$violet;
+$confirm-input-color:rgba(255,255,255,0.25);
+$neutral-input-color:$lightblue;
+
+//Link colors
+$color__link: $pink;
+$color__link-visited: $pink;
+$color__link-hover: $pink;
+
+$gradient--green-lightblue-violet:linear-gradient(to right, $green, $lightblue, $violet);
+
+$gradient--violet-pink-orange:linear-gradient(to right, $violet, $pink, $orange);
+
+$gradient--orange-green-lightblue:linear-gradient(to right, $orange, $green, $lightblue);
+
+$gradient--greystripes:repeating-linear-gradient(
+  -75deg,
+  #222 0.05em,
+  $coolgrey 0.1em
+);
+
+%textgradient__green-lightblue-violet {
+	.backgroundclip & {
+		color: white;
+		background-image:$gradient--green-lightblue-violet;
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}	
+}
+
+%textgradient__violet-pink-orange {
+	.backgroundclip & {
+		color: white;
+		background-image:$gradient--violet-pink-orange;
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}	
+}
+
+%textgradient__orange-green-lightblue {
+	.backgroundclip & {
+		color: white;
+		background-image:$gradient--orange-green-lightblue;
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}	
+}
+
+%textgradient__greystripes {
+	.backgroundclip & {
+		color: white;
+		background-image:$gradient--greystripes;
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}	
+}
+
+@keyframes gradient{
+  0%{
+    background-position:0 50%;
+  }
+  100%{
+    //background-position:-100% 50%;
+    background-size:400% 100%;
+  }
+}

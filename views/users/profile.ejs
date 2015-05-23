@@ -1,0 +1,11 @@
+<% include ../head %>
+    <h1><%= title %></h1>
+    <h2>Hey, <%= user.username %>!</h2>
+    <p>Email: <%= user.email %></p>
+    
+    <% if (message.length > 0) { %>
+      <div class="alert alert-danger"><%= message %></div>
+    <% } %>
+
+    <p><a href="/users/logout">Log out</a></p>
+<% include ../footer %>
