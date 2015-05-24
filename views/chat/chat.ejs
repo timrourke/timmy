@@ -1,14 +1,55 @@
-<% include chathead %>
-	<header class="chatHeader">
-   <h4 class="siteTitle">Timmy</h4> <p class="logout"><a href="/logout">Log out</a></p>
-  </header>    
-    <% if (message.length > 0) { %>
-      <div class="alert alert-danger"><%= message %></div>
-    <% } %>
+<!doctype html>
+<html class="no-js" lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title><%= title %></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <div id="innerWrapper">
-      <ul id="users"></ul>
-      <ul id="messages"></ul>
-    </div>
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <!-- Place favicon.ico in the root directory -->
+
+        <link rel="stylesheet" href="/css/style.css">
+        <script src="/js/vendor/modernizr-2.8.3.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+    </head>
+    <body class="chat">
+
+	<!--[if lt IE 8]>
+	<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+	<![endif]-->
+
+	<!-- Add your site or application content here -->
+	<% if (message.length > 0) { %>
+		<div class="alert alert-danger"><%= message %></div>
+	<% } %>
+
+	<div class="wrapper">
+		<header class="chatHeader">
+			<h4 class="siteTitle">Timmy</h4> <p class="logout"><a href="/logout">Log out</a></p>
+		</header>
+		<main>
+			<div class="left">
+				<ul id="users">
+					
+				</ul>
+			</div>
+			<div class="right">
+				<ul id="messages">
+					
+				</ul>
+			</div>
+		</main>
+		<footer class="chatFooter">
+			<form id="chatForm" action="">
+				<input type="text" id="m" autocomplete="off" /><button>Send</button>
+			</form>
+		</footer>
+	</div>
     
-<% include chatfooter %>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.11.3.min.js"><\/script>')</script>
+        <script src="/js/build/global.js"></script>
+  </body>
+</html>
