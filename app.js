@@ -128,13 +128,16 @@ function getUsersInRoom(socket, room) {
 function joinRoom(socket, room) {
   var socketId = socket.id;
   socket.join(room);
-  clients[socketId].clientdata.room.push(room);
+  var index = clients[socketId].clientdata.room.indexOf(room);
+  if (index == -1) {
+    clients[socketId].clientdata.room.push(room);
   
-  socket.broadcast.to(room).emit('join message', { 
-    name: clients[socketId].clientdata.name, 
-    room: room 
-  });
-
+    socket.broadcast.to(room).emit('join message', { 
+      name: clients[socketId].clientdata.name, 
+      room: room 
+    });  
+  }
+  
   getUsersInRoom(socket, room);
 }
 
