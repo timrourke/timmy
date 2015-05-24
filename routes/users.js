@@ -1,9 +1,10 @@
 var User = require('../models/user');
 
-module.exports = function(express, passport) {
+module.exports = function(express, passport, socketLogout) {
   var passport = passport;
   var express = express;
   var router = express.Router();
+  var socketLogout = socketLogout;
 
   function isLoggedIn(err, req, res, next) {
     if (err) return next(err);
@@ -37,7 +38,7 @@ module.exports = function(express, passport) {
   });
 
   router.post('/login', passport.authenticate('local-login', {
-    successRedirect : '/users/profile', // redirect to the secure profile section
+    successRedirect : '/chat', // redirect to the secure profile section
     failureRedirect : '/users/login', // redirect back to the signup page if there is an error
     failureFlash : true // allow flash messages
   }));
@@ -99,11 +100,6 @@ module.exports = function(express, passport) {
 
   router.get('/edit', isLoggedIn, isAdmin, function(req, res, next) {
     res.send('admin page');
-  });
-
-  router.get('/logout', function(req, res) {
-    req.logout();
-    res.redirect('/');
   });
 
   return router;

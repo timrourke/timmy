@@ -111,13 +111,77 @@ function onAuthorizeFail(data, message, error, accept){
   // see: http://socket.io/docs/client-api/#socket > error-object
 }
 
-io.on('connection', function(socket) {
-  console.log('user connected to socket');
-  socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
+// Chatroom tracking vars
+var clients = {};
+var rooms = {};
+var currentRoom = {};
+
+function getUsersInRoom(socket, room) {
+  var res = [];
+  for (var socketId in io.nsps['/'].adapter.rooms[room]) {
+    res.push(clients[socketId].clientdata.name);
+  }
+  io.to(room).emit('user list', res);
+  console.log(room + ' now contains: ' + res);
+}
+
+function joinRoom(socket, room) {
+  var socketId = socket.id;
+  socket.join(room);
+  clients[socketId].clientdata.room.push(room);
+  
+  socket.broadcast.to(room).emit('join message', { 
+    name: clients[socketId].clientdata.name, 
+    room: room 
   });
+
+  getUsersInRoom(socket, room);
+}
+
+function leaveRoom(socket, room) {
+  socket.leave(room, function(){
+      getUsersInRoom(socket, room);
+  });
+}
+
+function addRoomToRoomList(socket, room) {
+  if (!rooms[room]) {
+    rooms[room] = [];
+  }
+}
+
+io.on('connection', function(socket) {
+  var socketId = socket.id;
+  var clientdata = {
+    name: socket.request.user.username,
+    room: []
+  }
+  socket.clientdata = clientdata;
+
+  if (!clients[socketId]) {
+    clients[socketId] = {};
+    clients[socketId]['clientdata'] = socket.clientdata;
+  }
+  
+  console.log('user connected to socket: ' + clients[socketId].clientdata.name);
+
+  joinRoom(socket, 'Lobby');
+  addRoomToRoomList(socket, 'Lobby');
+
+  socket.on('chat message', function(msg){
+    io.emit('chat message', {message: msg, name: socket.clientdata.name});
+  });
+
   socket.on('disconnect', function() {
-    console.log('user disconnected');
+    if (clients[socketId]) {
+      var socketRooms = clients[socketId].clientdata.room;
+      for (var room in socketRooms) {
+        getUsersInRoom(socket, socketRooms[room]);
+      }
+      delete clients[socketId];
+      
+      console.log('Client disconnected: ' + socket.request.user.username);
+    }
   });
 });
 
@@ -129,6 +193,13 @@ var chat = require('./routes/chat')(express, passport);
 app.use('/', routes);
 app.use('/users', users);
 app.use('/chat', chat);
+
+app.get('/logout', function(req, res) {
+  io.emit('user disconnected', {name: req.user.username});
+
+  req.logout();
+  res.redirect('/');
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

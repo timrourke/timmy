@@ -1,17 +1,16 @@
 <% include ../head %>
 	<script src="/socket.io/socket.io.js"></script>
 
-    <h1><%= title %></h1>
-    <h2>Hey, <%= user.username %>!</h2>
-    <p>Email: <%= user.email %></p>
     
     <% if (message.length > 0) { %>
       <div class="alert alert-danger"><%= message %></div>
     <% } %>
 
-    <p><a href="/users/logout">Log out</a></p>
+    
     <ul id="messages"></ul>
+    <ul id="users"></ul>
     <form id="chatForm" action="">
       <input type="text" id="m" autocomplete="off" /><button>Send</button>
     </form>
+    <p><a href="/logout">Log out</a></p>
 <% include ../footer %>
